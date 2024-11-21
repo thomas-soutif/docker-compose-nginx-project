@@ -1,0 +1,65 @@
+version: '3.7'
+
+services:
+  api1:
+    build: back-api1/
+    command: node index.js
+    expose:
+     - "3000"
+    networks:
+      - internal
+
+  api2:
+    build: back-api2/
+    command: node index.js
+    expose:
+     - "3000"
+    networks:
+      - internal
+  
+  frontend:
+    build: front/my-app/
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    command: npm run start
+    networks:
+      - internal
+  
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - api1
+      - api2
+    networks:
+      - internal
+      - external
+
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+
+volumes:
+  postgres-data:
+
+networks:
+  internal:
+    internal: true
+  external:

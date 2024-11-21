@@ -2,8 +2,12 @@
 A project that show 2 api and a front application (react) that is acces with a reverse proxy
 
 This project was develop on a **linux** system. If you want to contenerise it under windows, please modify the volume for the postgres in the docker compose file
+```yml
+postgres:
+  volumes:
+    - postgres-data:/var/lib/postgresql/data
+```
 ## How to build
-
 ```bash
 docker compose up -d --build
 ```
